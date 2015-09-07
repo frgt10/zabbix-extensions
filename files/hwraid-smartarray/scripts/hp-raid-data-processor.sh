@@ -90,7 +90,10 @@ cat $all_keys | while read key; do
   if [[ "$key" == *hpraid.bbu.status* ]]; then
      slot=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d, -f1)
      value=$(sed -n -e "/ctrl begin $slot/,/ctrl end $slot/p" /tmp/hp-raid-data-harvester.out |grep -wE "[ ]+Battery/Capacitor Status:" |awk '{print $3}')
-     echo "$(hostname) $key $value" >> $zbx_data
+
+     if [[ "$value" != "" ]]; then
+         echo "$(hostname) $key $value" >> $zbx_data
+     fi
   fi
 
   if [[ "$key" == *hpraid.ld.status* ]]; then
